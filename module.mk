@@ -6,7 +6,7 @@ include $(make-common.dir)/layout.mk
 
 # Build ccdv:
 _exe  := $(bin.dir)/ccdv
-_objs := $(call cc.c.to.o,$(prefix $(SRC)/util/, \
+_objs := $(call cc.c.to.o,$(addprefix $(SRC)/util/, \
     ccdv.c \
 ))
 
