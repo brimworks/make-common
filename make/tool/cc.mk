@@ -27,7 +27,9 @@ cc.lib.dirs          ?= $(patsubst :,$(SPACE),$($(cc.dl_path_var)))
 cc.compiler.flags    ?= $(or $(CFLAGS),-Wall -fPIC -std=c99 -pedantic -g)
 
 # Make it easy to define the path needed for running:
-cc.run = $(cc.dl_path_var)="$(patsubst $(SPACE),:,$(cc.lib.dirs))" PATH="$(bin.dir):$$PATH"
+cc.run = \
+   $(cc.dl_path_var)="$(patsubst $(SPACE),:,$(cc.lib.dirs)):$$$(cc.dl_path_var)" \
+   PATH="$(bin.dir):$$PATH"
 
 # Define rules for building object files with the C compiler.
 cc.o.rule = \
