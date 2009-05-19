@@ -18,12 +18,12 @@ endif
 # Use these variables to specify customizations:
 cc.compiler          ?= $(CC)
 cc.macro.flags       ?= $(CPPFLAGS)
-cc.include.dirs      ?=
+cc.include.dirs      ?= $(include.dir)
 cc.linker.flags      ?= $(LDFLAGS)
 cc.linker            ?= $(LD)
 cc.libs              ?= c
 cc.exe.libs          ?= crt1.o
-cc.lib.dirs          ?= $(patsubst :,$(SPACE),$($(cc.dl_path_var)))
+cc.lib.dirs          ?= $(lib.dir) $(patsubst :,$(SPACE),$($(cc.dl_path_var)))
 cc.compiler.flags    ?= $(or $(CFLAGS),-Wall -fPIC -std=c99 -pedantic -g)
 
 # Make it easy to define the path needed for running:
@@ -52,7 +52,7 @@ cc.so.rule = \
   $(ccdv) $(cc.linker) $(cc.link.shared) \
     $(addprefix -L,$(cc.lib.dirs)) \
     $(addprefix -l,$(cc.libs)) \
-    $(cc.linker.flags) $< -o $@
+    $(cc.linker.flags) $^ -o $@
 
 # Rule for building executable:
 cc.exe.rule = \
@@ -60,6 +60,6 @@ cc.exe.rule = \
   $(ccdv) $(cc.linker) \
     $(addprefix -L,$(cc.lib.dirs)) \
     $(addprefix -l,$(cc.libs) $(cc.exe.libs)) \
-    $(cc.linker.flags) $< -o $@
+    $(cc.linker.flags) $^ -o $@
 
 endif
