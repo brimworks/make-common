@@ -1,0 +1,72 @@
+SET-UP:
+
+  To use this common make logic you need GNU Make 3.81 and you need to
+  place a Makefile in the root of your package as such:
+
+  ######################################################################
+  SRC:=$(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+  include $(or $(shell make-common),$(error make-common is not on your PATH!))
+
+  ... add your logic here.
+  ######################################################################
+
+  If you want to create makefiles in other locations, simply include
+  the Makefile in the root of your package as such:
+
+  ######################################################################
+  include ../Makefile
+  ######################################################################
+
+  The make-common command must be in your PATH to perform a build.
+  make-common is a simple shell script that locates bootstrap.mk.
+
+  bootstrap.mk provides the following functionality:
+
+  * Defines BUILD (but can be overridden with environment variable).
+
+  * Sets the default target to be 'default'.
+
+  * Creates 'all', 'test', and 'default' phony targets such that
+    'default' depends on 'test' and 'test' depends on 'all'.
+
+  * Defines $(make-common.dir) so you can use the functionality
+    provided by this package.
+
+  * Defines $(pwd) macro used for determining the directory of the
+    current makefile, but it must be expanded *before* any other
+    makefile is included in order for it to work.
+
+  * Defines 'clean' target that `rm -rf` the $(BUILD) directory.
+
+HOW TO USE IT:
+
+  [1] For each module, create a file module.mk and include it in the
+      root Makefile.
+
+  include $(SRC)/module-name/module.mk
+  include $(SRC)/other/module-name/module.mk
+
+  [2] In each module.mk include the tools that you want to use.  See
+      below for usage on individual tools.
+
+TOOL: C compiler
+
+  pwd := $(pwd)
+  include $(make-common.dir)/tool/cc.mk
+
+  _exe  := $(bin.dir)/ccdv
+  _objs := $(call cc.c.to.o,$(prefix $(SRC)/util/, \
+    ccdv.c \
+  )
+
+  all: | $(_exe)
+  $(_exe): $(_objs)
+  [TAB]$(cc.exe.rule)
+  
+TOOL: copy
+
+  pwd := $(pwd)
+  include $(make-common.dir)/tool/cp.mk
+
+  # Copy everything in some-dir into the bin directory:
+  $(call cp.eval,$(pwd)/some-dir,$(bin.dir))
