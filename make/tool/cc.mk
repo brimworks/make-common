@@ -6,23 +6,28 @@ include $(make-common.dir)/tool/ccdv.mk
 include $(make-common.dir)/constants.mk
 include $(make-common.dir)/layout.mk
 
+# Variables defined differently by platform:
+ifeq ($(shell uname -s),Darwin)
+  cc.link.shared     ?= -dylib
+  cc.dl_path_var     ?= DYLD_LIBRARY_PATH
+else
+  cc.link.shared     ?= -shared
+  cc.dl_path_var     ?= LD_LIBRARY_PATH
+endif
+
 # Use these variables to specify customizations:
 cc.compiler          ?= $(CC)
 cc.macro.flags       ?= $(CPPFLAGS)
 cc.include.dirs      ?=
 cc.linker.flags      ?= $(LDFLAGS)
 cc.linker            ?= $(LD)
-cc.lib.dirs          ?=
+cc.libs              ?= c
+cc.exe.libs          ?= crt1.o
+cc.lib.dirs          ?= $(patsubst :,$(SPACE),$($(cc.dl_path_var)))
 cc.compiler.flags    ?= $(or $(CFLAGS),-Wall -fPIC -std=c99 -pedantic -g)
 
-# Variables defined differently by platform:
-ifeq ($(shell uname -s),Darwin)
-  cc.link.shared     ?= -dylib
-  cc.libs            ?= c crt1.o
-else
-  cc.link.shared     ?= -shared
-  cc.libs            ?= c
-endif
+# Make it easy to define the path needed for running:
+cc.run = $(cc.dl_path_var)="$(patsubst $(SPACE),:,$(cc.lib.dirs))" PATH="$(bin.dir):$$PATH"
 
 # Define rules for building object files with the C compiler.
 cc.o.rule = \
@@ -52,7 +57,7 @@ cc.exe.rule = \
   $(mkdir.rule)$(NEWLINE) \
   $(ccdv) $(cc.linker) \
     $(addprefix -L,$(cc.lib.dirs)) \
-    $(addprefix -l,$(cc.libs)) \
+    $(addprefix -l,$(cc.libs) $(cc.exe.libs)) \
     $(cc.linker.flags) $< -o $@
 
 endif

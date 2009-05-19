@@ -1,5 +1,0 @@
-#!/bin/sh
-#
-# Simple script for locating the makefiles to include.  To use this
-# package, simply add the directory of this script to your PATH.
-echo $(cd $(dirname $0)/.. && pwd)/make/bootstrap.mk

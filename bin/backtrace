@@ -1,0 +1,14 @@
+#!/bin/sh
+# Simple script for running program in gcc and obtaining a backtrace
+# if the program fails.  Uses a temp file in the current directory.
+
+exe="$1"; shift
+
+trap 'rm backtrace.$$.gdb; exit $?' EXIT
+
+echo "run $@" > backtrace.$$.gdb
+echo "where" >> backtrace.$$.gdb
+
+set -e
+
+gdb -f -x backtrace.$$.gdb -batch "$exe"

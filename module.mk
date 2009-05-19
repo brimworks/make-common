@@ -8,7 +8,7 @@ include $(make-common.dir)/layout.mk
 _exe  := $(bin.dir)/ccdv
 _objs := $(call cc.c.to.o,$(prefix $(SRC)/util/, \
     ccdv.c \
-)
+))
 
 all: | $(_exe)
 $(_exe): $(_objs)
