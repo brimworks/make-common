@@ -1,3 +1,11 @@
+STATUS:
+
+  Immature, partially vaporware.  In particular pkg-deploy doesn't exist
+  yet.  Note that the contents of the makefiles are also subject to
+  backwards incompatible changes.  This is simply an exploritory project
+  I'm doing in my free time, so I can't make any guarantee other than
+  death and taxes ;-).
+
 SET-UP:
 
   To use this common make logic you need GNU Make 3.81 and you need to
@@ -38,6 +46,8 @@ SET-UP:
 
   * Defines 'clean' target that `rm -rf` the $(BUILD) directory.
 
+  * Defines how to run `pkg-deploy`.
+
 HOW TO USE IT:
 
   [1] For each module, create a file module.mk and include it in the
@@ -60,6 +70,7 @@ TOOL: C compiler
   ))
 
   all: | $(_exe)
+  $(_exe): cc.objs=$(_objs)
   $(_exe): $(_objs)
   [TAB]$(cc.exe.rule)
   
@@ -70,3 +81,100 @@ TOOL: copy
 
   # Copy everything in some-dir into the bin directory:
   $(call cp.eval,$(pwd)/some-dir,$(bin.dir))
+
+HOW TO CONSUME BUILD ARTIFACTS:
+
+  ######################################################################
+  # TODO: This mechanism doesn't work yet since pkg-deploy does not
+  # exist yet.
+  ######################################################################
+
+  Simply create a file here:
+
+    $(SRC)/build.config
+
+  This file is in JSON syntax with the following structure:
+
+    {   "deploy": {
+            "<path>": [
+                {   "package": "<pkg-name>",
+                    "view":    [ "<view>", "<view>" ]
+                },
+                {   "package": "<pkg-name>",
+                    "view":    [ "<view>", "<view>" ]
+                },
+            ]
+        }
+    }
+
+  Where <path> is a path relative to $(BUILD) directory and each
+  element in the list declares a <pkg-name> and set of <view>s that
+  you want deployed to <path> before your build is started.  The
+  package views are applied in the order declared, and if there are
+  any symlink conflicts, the last one wins (warning messages about
+  conflicts are printed).
+
+  See L<HOW TO EXPORT BUILD ARTIFACTS> for a full description of what
+  a view is.
+
+HOW TO EXPORT BUILD ARTIFACTS:
+
+  Place files in your build output directory as such:
+
+    $(BUILD)/exports/<view>.view
+
+  This file is in JSON format and describes how to deploy using a
+  particular <view> of this package.  The JSON file has the following
+  data structure:
+
+    {   "dependencies": {
+            "<pkg-name>": {
+                "view": [ "<view>", "<view>${machine}" ]
+            },
+            "<pkg-name>": {
+                "view": [ "<view>", "<view>" ]
+            }
+        },
+        "map": [
+            "path/relative/to/build/directory/foo.txt",
+            [ "build/relative/dir/bar.txt", "deploy/relative/dir/bar.txt"],
+            "path/with/${variable}/escape-with-$$/fun.txt"
+        ],
+        "variables": {
+            "variable": [ "value1", "value2" ],
+            "machine":  [ "i686" ],
+        }
+    }
+
+  This file lists the set of <pkg-name> <view>s that all consumers of
+  this package's view will automatically acquire a transitive
+  dependency on.  Note that view names may use a "variable" by
+  enclosing the variable name in "${" followed by "}".
+
+  It also lists the set of files that are to be deployed when
+  consuming this view in the order they are applied (so if two files
+  are listed twice, the last one wins).  If an element in this list is
+  an array reference, it must consist of exactly 2 elements.  The
+  first element is the path relative to the build directory, and the
+  second element is the location it should be deployed to.
+
+  Note that the paths in the map may also contain variable names.  If
+  you want a literal dollar sign, you must escape it as such: $$.
+
+  All variables must be declared in the "variables" section, and a
+  list of all possible values must be enumerated.  When someone
+  consumes this view, by default they will get the first value in the
+  list if no variable is specified, or the value provided for the
+  variable is not in the set.
+
+  It might sounds silly to define a variable that can only have a
+  single value, however it can be useful if you merge several builds
+  together (like when you are building the same package on multiple
+  platforms or with different environment variables or different
+  dependencies).
+
+  By default, the variables are taken from any environment set when
+  pkg-deploy is executed.  Note that a special variable PLATFORM is
+  automatically set by pkg-deploy if none is defined in the
+  environment in which case PLATFORM becomes the platform defined for
+  the current computer on which pkg-deploy is executing.

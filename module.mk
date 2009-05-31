@@ -11,6 +11,7 @@ _objs := $(call cc.c.to.o,$(addprefix $(SRC)/util/, \
 ))
 
 all: | $(_exe)
+$(_exe): cc.objs := $(_objs)
 $(_exe): $(_objs)
 	$(cc.exe.rule)
 

@@ -52,7 +52,7 @@ cc.so.rule = \
   $(ccdv) $(cc.linker) $(cc.link.shared) \
     $(addprefix -L,$(cc.lib.dirs)) \
     $(addprefix -l,$(cc.libs)) \
-    $(cc.linker.flags) $^ -o $@
+    $(cc.linker.flags) $(or $(cc.objs),$^) -o $@
 
 # Rule for building executable:
 cc.exe.rule = \
@@ -60,6 +60,6 @@ cc.exe.rule = \
   $(ccdv) $(cc.linker) \
     $(addprefix -L,$(cc.lib.dirs)) \
     $(addprefix -l,$(cc.libs) $(cc.exe.libs)) \
-    $(cc.linker.flags) $^ -o $@
+    $(cc.linker.flags) $(or $(cc.objs),$^) -o $@
 
 endif
