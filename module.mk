@@ -1,4 +1,4 @@
-pwd := $(pwd)
+_pwd := $(pwd)
 
 include $(make-common.dir)/tool/cc.mk
 include $(make-common.dir)/tool/cp.mk

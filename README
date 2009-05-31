@@ -61,7 +61,7 @@ HOW TO USE IT:
 
 TOOL: C compiler
 
-  pwd := $(pwd)
+  _pwd := $(pwd)
   include $(make-common.dir)/tool/cc.mk
 
   _exe  := $(bin.dir)/ccdv
@@ -76,11 +76,11 @@ TOOL: C compiler
   
 TOOL: copy
 
-  pwd := $(pwd)
+  _pwd := $(pwd)
   include $(make-common.dir)/tool/cp.mk
 
   # Copy everything in some-dir into the bin directory:
-  $(call cp.eval,$(pwd)/some-dir,$(bin.dir))
+  $(call cp.eval,$(_pwd)/some-dir,$(bin.dir))
 
 HOW TO CONSUME BUILD ARTIFACTS:
 
