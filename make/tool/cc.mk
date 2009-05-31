@@ -2,7 +2,6 @@ ifndef tool/cc.mk
 tool/cc.mk:=$(pwd)
 
 include $(make-common.dir)/tool/mkdir.mk
-include $(make-common.dir)/tool/ccdv.mk
 include $(make-common.dir)/constants.mk
 include $(make-common.dir)/layout.mk
 
@@ -34,7 +33,7 @@ cc.run = \
 # Define rules for building object files with the C compiler.
 cc.o.rule = \
   $(mkdir.rule)$(NEWLINE) \
-  $(ccdv) $(cc.compiler) -c $(cc.compiler.flags) \
+  $(call at,CC)$(cc.compiler) -c $(cc.compiler.flags) \
     $(addprefix -I,$(cc.include.dirs)) \
     $(cc.macro.flags) $< -o $@
 
@@ -49,7 +48,7 @@ cc.c.to.o = \
 # Rule for building shared objects:
 cc.so.rule = \
   $(mkdir.rule)$(NEWLINE) \
-  $(ccdv) $(cc.linker) $(cc.link.shared) \
+  $(call at,LINK-SO)$(cc.linker) $(cc.link.shared) \
     $(addprefix -L,$(cc.lib.dirs)) \
     $(addprefix -l,$(cc.libs)) \
     $(cc.linker.flags) $(or $(cc.objs),$^) -o $@
@@ -57,7 +56,7 @@ cc.so.rule = \
 # Rule for building executable:
 cc.exe.rule = \
   $(mkdir.rule)$(NEWLINE) \
-  $(ccdv) $(cc.linker) \
+  $(call at,LINK-EXE)$(cc.linker) \
     $(addprefix -L,$(cc.lib.dirs)) \
     $(addprefix -l,$(cc.libs) $(cc.exe.libs)) \
     $(cc.linker.flags) $(or $(cc.objs),$^) -o $@

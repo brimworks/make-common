@@ -64,9 +64,9 @@ TOOL: C compiler
   _pwd := $(pwd)
   include $(make-common.dir)/tool/cc.mk
 
-  _exe  := $(bin.dir)/ccdv
+  _exe  := $(bin.dir)/hello-world
   _objs := $(call cc.c.to.o,$(addprefix $(SRC)/util/, \
-    ccdv.c \
+    main.c \
   ))
 
   all: | $(_exe)

@@ -2,12 +2,11 @@ ifndef tool/cp.mk
 tool/cp.mk:=$(pwd)
 
 include $(make-common.dir)/tool/mkdir.mk
-include $(make-common.dir)/tool/ccdv.mk
+include $(make-common.dir)/constants.mk
 
 # How to copy a file:
 cp.rule = \
-  $(mkdir.rule)$(NEWLINE) \
-  $(ccdv) cp -f $< $@
+  $(mkdir.rule)$(NEWLINE)$(TAB)$(call at,CP)cp -f $< $@
 
 cp.eval = $(eval $(call cp.tmpl,$1,$2))
 

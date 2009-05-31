@@ -29,7 +29,7 @@ clean:
 
 # Default to silencing many rules, but allow users to override this
 # silencing by running `make at=`
-at ?= @
+at ?= $(if $(1),@echo '    ' $1 $(notdir $@);,@)
 
 # If you have pkg-deploy on your PATH, then you can get your build
 # tools automatically.
