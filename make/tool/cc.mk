@@ -23,7 +23,10 @@ cc.linker            ?= $(LD)
 cc.libs              ?= c
 cc.exe.libs          ?= crt1.o
 cc.lib.dirs          ?= $(lib.dir) $(patsubst :,$(SPACE),$($(cc.dl_path_var)))
-cc.compiler.flags    ?= $(or $(CFLAGS),-Wall -fPIC -std=c99 -pedantic -g)
+cc.compiler.flags    ?= $(or $(CFLAGS),-Wall -fPIC -std=c99 -pedantic -g -MMD -MP)
+
+# include all the generated dependency information:
+include $(shell find '$(tmp.c.dir)' -name '*.d')
 
 # Make it easy to define the path needed for running:
 cc.run = \
