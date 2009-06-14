@@ -15,6 +15,10 @@ make-common.dir := $(pwd)
 # By default set the build directory.
 BUILD ?= $(SRC)/build
 
+# Make sure SRC and BUILD are absolute paths:
+override BUILD := $(abspath $(BUILD))
+override SRC   := $(abspath $(SRC))
+
 # The default target.
 default:
 
