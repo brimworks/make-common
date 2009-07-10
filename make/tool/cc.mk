@@ -9,9 +9,13 @@ include $(make-common.dir)/layout.mk
 ifeq ($(shell uname -s),Darwin)
   cc.link.shared     ?= -dylib
   cc.dl_path_var     ?= DYLD_LIBRARY_PATH
+  cc.libs            ?= c gcc_s.1
+  cc.linker          ?= MACOS_DEPLOYMENT_TARGET="10.3" $(LD)
 else
   cc.link.shared     ?= -shared
   cc.dl_path_var     ?= LD_LIBRARY_PATH
+  cc.libs            ?= c
+  cc.linker          ?= $(LD)
 endif
 
 # Use these variables to specify customizations:
@@ -19,8 +23,6 @@ cc.compiler          ?= $(CC)
 cc.macro.flags       ?= $(CPPFLAGS)
 cc.include.dirs      ?= $(include.dir)
 cc.linker.flags      ?= $(LDFLAGS)
-cc.linker            ?= $(LD)
-cc.libs              ?= c
 cc.exe.libs          ?= crt1.o
 cc.lib.dirs          ?= $(lib.dir) $(patsubst :,$(SPACE),$($(cc.dl_path_var)))
 cc.compiler.flags    ?= $(or $(CFLAGS),-Wall -fPIC -std=c99 -pedantic -g -MMD -MP)
