@@ -1,10 +1,9 @@
 STATUS:
 
-  Immature, partially vaporware.  In particular pkg-deploy doesn't exist
-  yet.  Note that the contents of the makefiles are also subject to
-  backwards incompatible changes.  This is simply an exploritory project
-  I'm doing in my free time, so I can't make any guarantee other than
-  death and taxes ;-).
+ This project has been *discontinued*!  I found that CMake is better,
+ so I'm using that instead.  You should go here now:
+
+  http://www.cmake.org/
 
 SET-UP:
 
